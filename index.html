@@ -128,7 +128,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{border:1px solid 
 
 <div class="reviewbox">
 <h3>Submit for Review</h3>
-<p>The AI coach will check whether your final explanation accurately explains the process and uses the required ideas in context. It will give brief feedback; it will not change your answers.</p><p class="small"><b>Teacher test note:</b> if review fails, the message beside the button will now show the actual backend error so setup problems can be identified.</p>
+<p>The AI coach will check whether your final explanation accurately explains the process and uses the required ideas in context. It will give brief feedback; it will not change your answers.</p>
 <button type="button" id="reviewBtn" onclick="submitForReview()">Submit for Review</button>
 <span id="reviewStatus" class="small"></span>
 <div id="reviewResult" style="display:none;margin-top:12px"></div>
@@ -369,13 +369,13 @@ function downloadPdf(){
   apiCall("build_pdf",{studentCode:activeCode,report:report})
     .then(r=>{
       renderReview();
-      if(!r || !r.ok || !r.base64){alert("PDF could not be created. Please try again.");return}
+      if(!r || !r.ok || !r.base64){alert("PDF could not be created"+(r&&r.error?": "+r.error:". Please try again."));return}
       const a=document.createElement("a");
       a.href="data:application/pdf;base64,"+r.base64;
       a.download=r.filename||("Unit3-Day5-"+activeCode+".pdf");
       document.body.appendChild(a);a.click();a.remove();
     })
-    .catch(()=>{renderReview();alert("PDF could not be created. Please try again.")});
+    .catch(err=>{renderReview();alert("PDF could not be created: "+(err&&err.message?err.message:"Unknown error"));});
 }
 
 window.addEventListener("beforeunload",()=>localSave());
